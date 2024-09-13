@@ -7,3 +7,4 @@ cypress/screenshots
 .idea
 allure-report
 mochawesome.json
+cypress/downloads

@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "open": "cypress open",
-    "test": "cypress run --browser chrome --headed",
+    "test:qa": "CYPRESS_ENV=qa cypress run --browser chrome --headed",
+    "test:staging": "CYPRESS_ENV=staging cypress run --browser chrome --headed",
+    "test:prod": "CYPRESS_ENV=production cypress run --browser chrome --headed",
     "test:mocha-reporter": "cypress run --reporter mochawesome --reporter-options reportDir=results,overwrite=false,html=false,json=true",
     "merge-reports": "mochawesome-merge \"results/*.json\" > mochawesome.json",
     "build-report": "marge mochawesome.json",
@@ -12,13 +14,15 @@
     "test-parallel": "npx cypress-parallel -s test -t 4 -d 'cypress/tests/API/*.js'",
     "clean-report": "rimraf mochawesome.json",
     "clean-results": "del-cli results/*.json",
-    "report": "npm run clean-report &&  npm run clean-report && npm run test:mocha-reporter && npm run merge-reports && npm run build-report && npm run open-report"
+    "report": "npm run clean-report &&  npm run clean-report && npm run test:mocha-reporter && npm run merge-reports && npm run build-report && npm run open-report",
+    "test:api": "npx cypress run --env grepTags=@api"
   },
   "keywords": [],
   "author": "Trung Le",
   "license": "ISC",
   "description": "This is Cypress Project for Automation Framework",
   "dependencies": {
+    "ajv": "^8.17.1",
     "cypress-xpath": "^2.0.1"
   },
   "devDependencies": {
@@ -31,6 +35,7 @@
     "mochawesome-merge": "^4.3.0",
     "mochawesome-report-generator": "^6.2.0",
     "rimraf": "^6.0.1",
-    "serve": "14.1.2"
+    "serve": "14.1.2",
+    "cypress-grep": "^3.0.4"
   }
 }
