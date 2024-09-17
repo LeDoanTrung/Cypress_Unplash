@@ -23,6 +23,7 @@ module.exports = defineConfig({
       cypressGrep(config);
       return config;
     },
+    
     specPattern: "./cypress/e2e/test/{API,UI}/*",
     baseUrl: config.baseUrl,
     retries: config.retries,

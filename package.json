@@ -15,19 +15,22 @@
     "clean-report": "rimraf mochawesome.json",
     "clean-results": "del-cli results/*.json",
     "report": "npm run clean-report &&  npm run clean-report && npm run test:mocha-reporter && npm run merge-reports && npm run build-report && npm run open-report",
-    "test:api": "npx cypress run --env grepTags=@api"
+    "test:api": "npx cypress run --env grepTags=@api",
+    "test:ui": "npx cypress run --env grepTags=@ui"
   },
   "keywords": [],
   "author": "Trung Le",
   "license": "ISC",
   "description": "This is Cypress Project for Automation Framework",
   "dependencies": {
+    "@faker-js/faker": "^9.0.1",
     "ajv": "^8.17.1",
     "cypress-xpath": "^2.0.1"
   },
   "devDependencies": {
     "cy2": "^4.0.9",
     "cypress": "^13.14.2",
+    "cypress-grep": "^3.0.4",
     "cypress-parallel": "^0.14.0",
     "del-cli": "^5.1.0",
     "marge": "1.0.1",
@@ -35,7 +38,6 @@
     "mochawesome-merge": "^4.3.0",
     "mochawesome-report-generator": "^6.2.0",
     "rimraf": "^6.0.1",
-    "serve": "14.1.2",
-    "cypress-grep": "^3.0.4"
+    "serve": "14.1.2"
   }
 }
