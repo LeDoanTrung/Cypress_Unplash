@@ -7,7 +7,7 @@ pipeline {
         stage('Build') {
             steps {
                 git 'https://github.com/LeDoanTrung/Cypress_Unplash'
-                bat 'npm install'
+                 bat 'npm install --force'
             }
         }
         stage('Test') {
