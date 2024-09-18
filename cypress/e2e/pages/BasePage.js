@@ -13,6 +13,12 @@ class BasePage {
        const url = '/@' + username;
        this.open(url);
     }
+
+    reloadPage() {
+        return cy.reload();
+    }
+    
 }
+
 
 export default BasePage;

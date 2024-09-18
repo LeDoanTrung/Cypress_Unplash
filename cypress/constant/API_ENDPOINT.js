@@ -1,15 +1,15 @@
 module.exports = {
     //Get list of user's liked photos endpoint
-    GetListOfLikedPhotosEndpoint : "/users/{username}/likes",
+    GetListOfLikedPhotosEndpoint : "/users/{0}/likes",
 
     //Dislike photo endpoint
-    DislikePhotoEndpoint : "/photos/{photoId}/like",
+    DislikePhotoEndpoint : "/photos/{0}/like",
 
     //Get photographer's profile
-    GetPhotographerProfile : "/users/{username}",
+    GetPhotographerProfile : "/users/{0}",
 
-    GetPhotographerPortfolioLink : "/users/{username}/portfolio",
+    GetPhotographerPortfolioLink : "/users/{0}/portfolio",
 
-    GetPhotographerPhotos: "/users/{username}/photos",
+    GetPhotographerPhotos: "/users/{0}/photos",
 
 }

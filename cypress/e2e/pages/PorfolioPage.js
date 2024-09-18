@@ -18,7 +18,11 @@ class PortfolioPage extends BasePage{
 
     isFollowed() {
         return this.followBtn.getText().then((text) => {
-            return text.includes("Unfollow");
+            const isFollowed = text.includes("Unfollow");
+            if (!isFollowed) {
+                cy.log("The user is not followed.");
+            }
+            return isFollowed;
         });
     }
 

@@ -1,6 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { accountFilePath } from "../constant/FILE_PATH";
-import path from 'path';
+import _ from "lodash";
 
 export default class DataGenerator {
     // Generate random username with letters and numbers
@@ -13,6 +12,6 @@ export default class DataGenerator {
 
     // Generate random number between 1 and 20
     static generateRandomNumber() {
-        return faker.datatype.number({ min: 1, max: 20 });
+        return  _.random(1, 20);
     }
 }
