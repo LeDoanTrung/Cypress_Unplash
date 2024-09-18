@@ -19,7 +19,6 @@ pipeline {
                        bat 'npm run merge-reports'
                        bat 'npm run build-report'
 
-                       bat 'start mochawesome-report\\mochawesome.html'
             }
         }
     }
