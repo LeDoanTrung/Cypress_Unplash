@@ -1,16 +1,12 @@
 # Cypress Framework for Unsplash
 
-[![cypress-framework](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/detailed/sh3aqa/main&style=flat&logo=cypress)](https://cloud.cypress.io/projects/1z2vqi/runs)
-[![cypress-framework](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/count/sh3aqa/main&style=flat&logo=cypress)](https://cloud.cypress.io/projects/1z2vqi/runs)
-
-Cypress test automation framework built with JavaScript (JS) that follows the Page Object Model (POM) design pattern to implement the UI tests for OpenCart E-commerce store.
+[![cypress-framework](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/detailed/1z2vqi/main&style=flat&logo=cypress)](https://cloud.cypress.io/projects/1z2vqi/runs)
+[![cypress-framework](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/count/1z2vqi/main&style=flat&logo=cypress)](https://cloud.cypress.io/projects/1z2vqi/runs
 
 > If you are a beginner to Cypress, refer to my other repo to refresh your Cypress knowledge which will serve as a starting-point to Cypress testing:
-[Cypress-E2E-Web-and-API-Testing](https://github.com/itkhanz/Cypress-E2E-Web-and-API-Testing)
+[Cypress_Unplash](https://github.com/LeDoanTrung/Cypress_Unplash)
 
-Application Under Test (AUT):
-https://naveenautomationlabs.com/opencart/index.php
-
+Application Under Test (AUT): https://unsplash.com/
 
 ## Description
 This project is a Cypress framework designed for testing the Unsplash application. It includes various services and utilities to facilitate API testing and UI testing.
