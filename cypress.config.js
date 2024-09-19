@@ -17,6 +17,7 @@ const environment = process.env.CYPRESS_ENV || 'qa';
 const config = getConfigByEnvironment(environment);
 
 module.exports = defineConfig({
+  projectId: "1z2vqi",
   env: config.env,
   e2e: {
     setupNodeEvents(on, config) {
