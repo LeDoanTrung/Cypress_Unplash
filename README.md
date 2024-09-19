@@ -1,7 +1,7 @@
 # Cypress Framework for Unsplash
 
 [![cypress-framework](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/detailed/1z2vqi/main&style=flat&logo=cypress)](https://cloud.cypress.io/projects/1z2vqi/runs)
-[![cypress-framework](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/count/1z2vqi/main&style=flat&logo=cypress)](https://cloud.cypress.io/projects/1z2vqi/runs
+
 
 > If you are a beginner to Cypress, refer to my other repo to refresh your Cypress knowledge which will serve as a starting-point to Cypress testing:
 [Cypress_Unplash](https://github.com/LeDoanTrung/Cypress_Unplash)
