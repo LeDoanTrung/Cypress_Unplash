@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "cy2": "^4.0.9",
-    "cypress": "^13.14.2",
+    "cypress": "^10.0.0",
     "cypress-grep": "^3.0.4",
     "cypress-parallel": "^0.14.0",
     "del-cli": "^5.1.0",
