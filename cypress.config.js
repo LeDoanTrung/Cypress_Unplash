@@ -1,7 +1,8 @@
 const { defineConfig } = require("cypress");
 const fs = require('fs');
 const path = require('path');
-const cypressGrep = require('cypress-grep/src/plugin');
+const cypressGrep = require('@cypress/grep/src/plugin');
+
 
 
 function getConfigByEnvironment(env) {
