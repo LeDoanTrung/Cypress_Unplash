@@ -1,8 +1,18 @@
 import { faker } from "@faker-js/faker";
 import _ from "lodash";
 
+
+/**
+ * DataGenerator class provides methods to generate random data such as usernames and numbers.
+ */
 export default class DataGenerator {
-    // Generate random username with letters and numbers
+    /**
+     * Generates a random username consisting of letters and numbers.
+     * The username is generated using faker and then sanitized to include only lowercase letters.
+     * A random number between 1000 and 9999 is appended to the username.
+     * 
+     * @returns {string} - The generated username.
+     */
     static generateUsername() {
         let username = faker.internet.userName();
         username = username.toLowerCase().replace(/[^a-z]/g, '');
@@ -10,7 +20,11 @@ export default class DataGenerator {
         return `${username}${randomNumber}`;
     }
 
-    // Generate random number between 1 and 20
+    /**
+     * Generates a random number between 1 and 20.
+     * 
+     * @returns {number} - The generated random number.
+     */
     static generateRandomNumber() {
         return  _.random(1, 20);
     }

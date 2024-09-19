@@ -8,10 +8,13 @@ const API_ENDPOINT = {
     // Get photographer's profile
     GetPhotographerProfile: "/users/{0}",
 
+    // Get photographer's portfolio
     GetPhotographerPortfolioLink: "/users/{0}/portfolio",
 
+    // Get photographer's photos
     GetPhotographerPhotos: "/users/{0}/photos",
 
+    // Get photographer's liked photos
     GetPhotographerLikedPhotos: "/users/{0}/likes"
 };
 

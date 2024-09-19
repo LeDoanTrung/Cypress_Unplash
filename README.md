@@ -1,7 +1,7 @@
 # Cypress Framework for Unsplash
 
-[![cypress-framework](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/detailed/sh3aqa/main&style=flat&logo=cypress)](https://cloud.cypress.io/projects/sh3aqa/runs)
-[![cypress-framework](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/count/sh3aqa/main&style=flat&logo=cypress)](https://cloud.cypress.io/projects/sh3aqa/runs)
+[![cypress-framework](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/detailed/sh3aqa/main&style=flat&logo=cypress)](https://cloud.cypress.io/projects/1z2vqi/runs)
+[![cypress-framework](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/count/sh3aqa/main&style=flat&logo=cypress)](https://cloud.cypress.io/projects/1z2vqi/runs)
 
 Cypress test automation framework built with JavaScript (JS) that follows the Page Object Model (POM) design pattern to implement the UI tests for OpenCart E-commerce store.
 
@@ -172,6 +172,7 @@ To run the tests, use the following commands:
 - `cypress/support`: Contains custom commands and utilities.
 - `cypress/service`: Contains service classes for API interactions.
 - `cypress/constant`: Contains constant values used across the project, such as API endpoints and configuration settings.
+- `settings` : Contains configuration files for different environments and other project-specific settings.
 
 ## Jenkins Integration
 This project includes a `Jenkinsfile` for setting up a Jenkins pipeline. The `Jenkinsfile` is located in the root directory of the project and defines the stages for installing dependencies, running tests, and generating reports.
@@ -195,6 +196,16 @@ To set up the Jenkins pipeline:
     "projectId": ""
   }
   ```
+
+## Github Actions
+
+* This project also includes a cypress.yml file for setting up a GitHub Actions workflow. The cypress.yml file is located in the .github/workflows directory and defines the steps for running the Cypress tests on GitHub Actions.
+
+* Setting Up GitHub Actions
+To set up GitHub Actions for this project:
+
+    - Ensure the cypress.yml file is located in the .github/workflows directory.
+    - GitHub Actions will automatically detect the cypress.yml file and use it to configure the workflow.
 
 ## Contributing
 To contribute to this project, follow these steps:

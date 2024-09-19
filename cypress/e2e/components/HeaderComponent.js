@@ -1,3 +1,6 @@
+/**
+ * HeaderComponent class encapsulates the elements and methods for interacting with the header section of the Unsplash application.
+ */
 export default class HeaderComponent {
     //Elements
     get loginBtn() { return cy.getElementByText('a','Log in'); }
