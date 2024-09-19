@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "open": "cypress open",
+    "start": "cypress run --browser chrome --headed",
     "test:qa": "CYPRESS_ENV=qa cypress run --browser chrome --headed",
     "test:staging": "CYPRESS_ENV=staging cypress run --browser chrome --headed",
     "test:prod": "CYPRESS_ENV=production cypress run --browser chrome --headed",
