@@ -181,6 +181,21 @@ To set up the Jenkins pipeline:
 2. In the pipeline configuration, point to the repository containing this project.
 3. Jenkins will automatically detect the `Jenkinsfile` and use it to configure the pipeline.
 
+## Cypress Cloud ☁️
+
+* Record a run to see your test results in Cypress Cloud. You can then optimize your test suite, debug failing and flaky tests, Test Replay, watch video, view console output and screenshots, and integrate with your favorite tools.
+* [Cypress Cloud documentation](https://docs.cypress.io/guides/cloud/introduction)
+* [Cypress Project ID and Record Key](https://docs.cypress.io/guides/cloud/account-management/projects)
+* [Record tests](https://docs.cypress.io/guides/continuous-integration/introduction#Record-tests)
+  * Once you set up your project to record, Cypress generates a unique projectId for your project and automatically insert it into your Cypress configuration file. The projectId is a 6 character string in your Cypress configuration.
+  * The record key is used to authenticate that your project is allowed to record tests to Cypress Cloud. As long as your record key stays private, no one will be able to record test runs for your project - even if they have your projectId.
+  * Create `cypress.env.json` in root directory that Cypress will automatically check. Values in here will overwrite conflicting environment variables in your Cypress configuration.This strategy is useful because if you add cypress.env.json to your `.gitignore` file, the values in here can be different for each developer machine.
+  ```json
+  {
+    "projectId": ""
+  }
+  ```
+
 ## Contributing
 To contribute to this project, follow these steps:
 
