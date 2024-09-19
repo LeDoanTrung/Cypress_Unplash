@@ -13,7 +13,7 @@ describe('Following User Test', { tags: ['@ui', '@smoke'] }, () => {
         cy.fixture('user.json').as('user');
     });
 
-    it('Should follow a photographer of the third picture successfully', function()  {
+    it('Should follow a photographer of the third picture successfully', { tags: ['@happyCase'] }, function()  {
         const email = this.user.email;
         const password = this.user.password;
 

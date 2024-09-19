@@ -1,0 +1,470 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Generated schema for Root",
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "alternative_slugs": {
+          "type": "object",
+          "properties": {
+            "en": {
+              "type": "string"
+            },
+            "es": {
+              "type": "string"
+            },
+            "ja": {
+              "type": "string"
+            },
+            "fr": {
+              "type": "string"
+            },
+            "it": {
+              "type": "string"
+            },
+            "ko": {
+              "type": "string"
+            },
+            "de": {
+              "type": "string"
+            },
+            "pt": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "en",
+            "es",
+            "ja",
+            "fr",
+            "it",
+            "ko",
+            "de",
+            "pt"
+          ]
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "promoted_at": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "color": {
+          "type": "string"
+        },
+        "blur_hash": {
+          "type": "string"
+        },
+        "description": {
+          "type": ["string","null"]
+        },
+        "alt_description": {
+          "type": ["string","null"]
+        },
+        "breadcrumbs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "slug": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "index": {
+                "type": "number"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "slug",
+              "title",
+              "index",
+              "type"
+            ]
+          }
+        },
+        "urls": {
+          "type": "object",
+          "properties": {
+            "raw": {
+              "type": "string"
+            },
+            "full": {
+              "type": "string"
+            },
+            "regular": {
+              "type": "string"
+            },
+            "small": {
+              "type": "string"
+            },
+            "thumb": {
+              "type": "string"
+            },
+            "small_s3": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "raw",
+            "full",
+            "regular",
+            "small",
+            "thumb",
+            "small_s3"
+          ]
+        },
+        "links": {
+          "type": "object",
+          "properties": {
+            "self": {
+              "type": "string"
+            },
+            "html": {
+              "type": "string"
+            },
+            "download": {
+              "type": "string"
+            },
+            "download_location": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "self",
+            "html",
+            "download",
+            "download_location"
+          ]
+        },
+        "likes": {
+          "type": "number"
+        },
+        "liked_by_user": {
+          "type": "boolean"
+        },
+        "current_user_collections": {
+          "type": "array",
+          "items": {}
+        },
+        "sponsorship": {},
+        "topic_submissions": {
+          "type": "object",
+          "properties": {
+            "street-photography": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "approved_on": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "status",
+                "approved_on"
+              ]
+            },
+            "nature": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "approved_on": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "status"
+              ]
+            },
+            "wallpapers": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "approved_on": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "status"
+              ]
+            },
+            "blue": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "approved_on": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "status",
+                "approved_on"
+              ]
+            },
+            "cool-tones": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "status"
+              ]
+            },
+            "on-the-lake": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "approved_on": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "status",
+                "approved_on"
+              ]
+            },
+            "spirituality": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "approved_on": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "status",
+                "approved_on"
+              ]
+            },
+            "textures-patterns": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "approved_on": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "status",
+                "approved_on"
+              ]
+            }
+          },
+          "required": []
+        },
+        "asset_type": {
+          "type": "string"
+        },
+        "user": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "first_name": {
+              "type": "string"
+            },
+            "last_name": {
+              "type": ["string","null"]
+            },
+            "twitter_username": {
+              "type": ["string","null"]
+            },
+            "portfolio_url": {
+              "type": ["string","null"]
+            },
+            "bio": {
+              "type": ["string","null"]
+            },
+            "location": {
+              "type": ["string","null"]
+            },
+            "links": {
+              "type": "object",
+              "properties": {
+                "self": {
+                  "type": "string"
+                },
+                "html": {
+                  "type": "string"
+                },
+                "photos": {
+                  "type": "string"
+                },
+                "likes": {
+                  "type": "string"
+                },
+                "portfolio": {
+                  "type": "string"
+                },
+                "following": {
+                  "type": "string"
+                },
+                "followers": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "self",
+                "html",
+                "photos",
+                "likes",
+                "portfolio",
+                "following",
+                "followers"
+              ]
+            },
+            "profile_image": {
+              "type": "object",
+              "properties": {
+                "small": {
+                  "type": "string"
+                },
+                "medium": {
+                  "type": "string"
+                },
+                "large": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "small",
+                "medium",
+                "large"
+              ]
+            },
+            "instagram_username": {
+              "type": ["string","null"]
+            },
+            "total_collections": {
+              "type": "number"
+            },
+            "total_likes": {
+              "type": "number"
+            },
+            "total_photos": {
+              "type": "number"
+            },
+            "total_promoted_photos": {
+              "type": "number"
+            },
+            "total_illustrations": {
+              "type": "number"
+            },
+            "total_promoted_illustrations": {
+              "type": "number"
+            },
+            "accepted_tos": {
+              "type": "boolean"
+            },
+            "for_hire": {
+              "type": "boolean"
+            },
+            "social": {
+              "type": "object",
+              "properties": {
+                "instagram_username": {
+                  "type": ["string","null"]
+                },
+                "portfolio_url": {
+                  "type": ["string","null"]
+                },
+                "twitter_username": {
+                  "type": ["string","null"]
+                },
+                "paypal_email": {}
+              },
+              "required": [
+                "paypal_email"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "updated_at",
+            "username",
+            "name",
+            "first_name",
+            "links",
+            "profile_image",
+            "total_collections",
+            "total_likes",
+            "total_photos",
+            "total_promoted_photos",
+            "total_illustrations",
+            "total_promoted_illustrations",
+            "accepted_tos",
+            "for_hire",
+            "social"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "slug",
+        "alternative_slugs",
+        "created_at",
+        "updated_at",
+        "promoted_at",
+        "width",
+        "height",
+        "color",
+        "blur_hash",
+        "breadcrumbs",
+        "urls",
+        "links",
+        "likes",
+        "liked_by_user",
+        "current_user_collections",
+        "sponsorship",
+        "topic_submissions",
+        "asset_type",
+        "user"
+      ]
+    }
+  }

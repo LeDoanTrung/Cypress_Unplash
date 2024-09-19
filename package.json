@@ -13,12 +13,13 @@
     "open-report": "serve mochawesome-report",
     "test-parallel": "npx cypress-parallel -s test -t 4 -d 'cypress/tests/API/*.js'",
     "clean-report": "rimraf mochawesome.json",
-    "clean-": "del-cli results/*.json",
+    "clean-results": "del-cli results/*.json",
     "report": "npm run clean-report &&  npm run clean-results && npm run test:mocha-reporter && npm run merge-reports && npm run build-report && npm run open-report",
     "test:api": "npx cypress run --env grepTags=@api",
     "test:ui": "npx cypress run --env grepTags=@ui",
     "test:regression": "npx cypress run --env grepTags=@regression",
-    "test:smoke": "npx cypress run --env grepTags=@smoke"
+    "test:smoke": "npx cypress run --env grepTags=@smoke",
+    "test:happyCase": "npx cypress run --env grepTags=@happyCase"
   },
   "keywords": [],
   "author": "Trung Le",

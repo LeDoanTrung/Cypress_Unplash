@@ -19,7 +19,7 @@ describe("Update User's profile test", { tags: ['@ui', '@smoke'] }, () => {
         cy.fixture('user.json').as('user');
     });
 
-    it('Should update user profile successfully', function()  {
+    it('Should update user profile successfully', { tags: ['@happyCase'] }, function()  {
         const email = this.user.email;
         const password = this.user.password;
 

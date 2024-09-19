@@ -3,13 +3,14 @@
  * @method apiGetRequest
  * 
  * @example 
- * cy.apiGetRequest('https://api.example.com', headers)
+ * cy.apiGetRequest('https://api.example.com', headers, false)
  */
-Cypress.Commands.add('apiGetRequest', (url, headers) => {
+Cypress.Commands.add('apiGetRequest', (url, headers, failOnStatusCode = true) => {
     const options = {
         method: 'GET',
         url: url,
-        headers: headers
+        headers: headers,
+        failOnStatusCode: failOnStatusCode
     };
 
     return cy.request(options);
@@ -20,14 +21,15 @@ Cypress.Commands.add('apiGetRequest', (url, headers) => {
  * @method apiPostRequest
  * 
  * @example 
- * cy.apiPostRequest('https://api.example.com', headers, body)
+ * cy.apiPostRequest('https://api.example.com', headers, body, false)
  */
-Cypress.Commands.add('apiPostRequest', (url, headers, body) => {
+Cypress.Commands.add('apiPostRequest', (url, headers, body, failOnStatusCode = true) => {
     const options = {
         method: 'POST',
         url: url,
         headers: headers,
-        body: body
+        body: body,
+        failOnStatusCode: failOnStatusCode
     };
 
     return cy.request(options);
@@ -38,14 +40,15 @@ Cypress.Commands.add('apiPostRequest', (url, headers, body) => {
  * @method apiPutRequest
  * 
  * @example 
- * cy.apiPutRequest('https://api.example.com', headers, body)
+ * cy.apiPutRequest('https://api.example.com', headers, body, false)
  */
-Cypress.Commands.add('apiPutRequest', (url, headers, body) => {
+Cypress.Commands.add('apiPutRequest', (url, headers, body, failOnStatusCode = true) => {
     const options = {
         method: 'PUT',
         url: url,
         headers: headers,
-        body: body
+        body: body,
+        failOnStatusCode: failOnStatusCode
     };
 
     return cy.request(options);
@@ -56,13 +59,14 @@ Cypress.Commands.add('apiPutRequest', (url, headers, body) => {
  * @method apiDeleteRequest
  * 
  * @example 
- * cy.apiDeleteRequest('https://api.example.com', headers)
+ * cy.apiDeleteRequest('https://api.example.com', headers, false)
  */
-Cypress.Commands.add('apiDeleteRequest', (url, headers) => {
+Cypress.Commands.add('apiDeleteRequest', (url, headers, failOnStatusCode = true) => {
     const options = {
         method: 'DELETE',
         url: url,
-        headers: headers
+        headers: headers,
+        failOnStatusCode: failOnStatusCode
     };
 
     return cy.request(options);

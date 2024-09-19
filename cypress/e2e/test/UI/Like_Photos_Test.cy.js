@@ -18,7 +18,7 @@ describe('Like photos Test', { tags: ['@ui'] }, () => {
         });
     });
 
-    it('Should like 03 random photos successfully', function()  {
+    it('Should like 03 random photos successfully', { tags: ['@happyCase'] }, function()  {
         const email = user.email;
         const password = user.password;
 

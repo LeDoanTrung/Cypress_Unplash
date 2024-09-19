@@ -1,0 +1,239 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Generated schema for Root",
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "color": {
+          "type": "string"
+        },
+        "blur_hash": {
+          "type": "string"
+        },
+        "likes": {
+          "type": "number"
+        },
+        "liked_by_user": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": ["string", "null"]
+        },
+        "user": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "portfolio_url": {
+              "type": "string"
+            },
+            "bio": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "total_likes": {
+              "type": "number"
+            },
+            "total_photos": {
+              "type": "number"
+            },
+            "total_collections": {
+              "type": "number"
+            },
+            "instagram_username": {
+              "type": "string"
+            },
+            "twitter_username": {
+              "type": "string"
+            },
+            "profile_image": {
+              "type": "object",
+              "properties": {
+                "small": {
+                  "type": "string"
+                },
+                "medium": {
+                  "type": "string"
+                },
+                "large": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "small",
+                "medium",
+                "large"
+              ]
+            },
+            "links": {
+              "type": "object",
+              "properties": {
+                "self": {
+                  "type": "string"
+                },
+                "html": {
+                  "type": "string"
+                },
+                "photos": {
+                  "type": "string"
+                },
+                "likes": {
+                  "type": "string"
+                },
+                "portfolio": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "self",
+                "html",
+                "photos",
+                "likes",
+                "portfolio"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "username",
+            "name",
+            "portfolio_url",
+            "bio",
+            "location",
+            "total_likes",
+            "total_photos",
+            "total_collections",
+            "instagram_username",
+            "twitter_username",
+            "profile_image",
+            "links"
+          ]
+        },
+        "current_user_collections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "title": {
+                "type": "string"
+              },
+              "published_at": {
+                "type": "string"
+              },
+              "last_collected_at": {
+                "type": "string"
+              },
+              "updated_at": {
+                "type": "string"
+              },
+              "cover_photo": {},
+              "user": {}
+            },
+            "required": [
+              "id",
+              "title",
+              "published_at",
+              "last_collected_at",
+              "updated_at",
+              "cover_photo",
+              "user"
+            ]
+          }
+        },
+        "urls": {
+          "type": "object",
+          "properties": {
+            "raw": {
+              "type": "string"
+            },
+            "full": {
+              "type": "string"
+            },
+            "regular": {
+              "type": "string"
+            },
+            "small": {
+              "type": "string"
+            },
+            "thumb": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "raw",
+            "full",
+            "regular",
+            "small",
+            "thumb"
+          ]
+        },
+        "links": {
+          "type": "object",
+          "properties": {
+            "self": {
+              "type": "string"
+            },
+            "html": {
+              "type": "string"
+            },
+            "download": {
+              "type": "string"
+            },
+            "download_location": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "self",
+            "html",
+            "download",
+            "download_location"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "created_at",
+        "updated_at",
+        "width",
+        "height",
+        "color",
+        "blur_hash",
+        "likes",
+        "liked_by_user",
+        "description",
+        "user",
+        "current_user_collections",
+        "urls",
+        "links"
+      ]
+    }
+  }
