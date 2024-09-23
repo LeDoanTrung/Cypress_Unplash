@@ -8,3 +8,5 @@ cypress/screenshots
 allure-report
 mochawesome.json
 cypress/downloads
+runner-results
+multi-reporter-config.json

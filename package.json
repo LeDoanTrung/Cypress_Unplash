@@ -12,7 +12,7 @@
     "merge-reports": "mochawesome-merge \"results/*.json\" > mochawesome.json",
     "build-report": "marge mochawesome.json",
     "open-report": "serve mochawesome-report",
-    "test-parallel": "npx cypress-parallel -s test -t 4 -d 'cypress/tests/API/*.js'",
+    "test-parallel": "npx cypress-parallel -s start -t 1 -d 'cypress/e2e/test/API/*.js'",
     "clean-report": "rimraf mochawesome.json",
     "clean-results": "del-cli results/*.json",
     "report": "npm run clean-report &&  npm run clean-results && npm run test:mocha-reporter && npm run merge-reports && npm run build-report && npm run open-report",
