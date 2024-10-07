@@ -146,5 +146,8 @@ describe('Test request for getting Photographer Profile', { tags: ['@api'] }, fu
         PhotoGrapherService.getPhotoGrapherLikedPhotos(token, username).then((response) => {
             expect(response.status).to.eq(404);
         });
+
+
+        //test
     });
 });
