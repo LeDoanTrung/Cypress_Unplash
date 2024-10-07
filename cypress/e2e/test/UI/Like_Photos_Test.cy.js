@@ -26,7 +26,7 @@ describe('Like photos Test', { tags: ['@ui'] }, () => {
         const loginPage = homepage.goToLoginPage();
         loginPage.loginWithUI(email, password);
 
-        const listOfLikedPhotos = homepage.likeRandomPhotos(1);
+        const listOfLikedPhotos = homepage.likeRandomPhotos(3);
         homepage.goToHomePage();
         
         const profilePage = homepage.goToProfilePage();
