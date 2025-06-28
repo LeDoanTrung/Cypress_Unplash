@@ -1,4 +1,4 @@
-import { DislikePhotoEndpoint } from "../constant/api_endPoint";
+import { DislikePhotoEndpoint } from "../constant/API_ENDPOINT";
 import { StringFormat } from "../support/extension/string_extension";
 
 const apiUrl = Cypress.env('apiURL');

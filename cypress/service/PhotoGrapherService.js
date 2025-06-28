@@ -1,4 +1,4 @@
-import API_ENDPOINT from "../constant/api_endPoint";
+import API_ENDPOINT from "../constant/API_ENDPOINT";
 import { StringFormat } from "../support/extension/string_extension";
 
 const apiUrl = Cypress.env('apiURL');
