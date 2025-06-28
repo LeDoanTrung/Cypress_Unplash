@@ -17,11 +17,11 @@ function getConfigByEnvironment(env) {
 const environment = process.env.CYPRESS_ENV || 'qa';
 const config = getConfigByEnvironment(environment);
 
-module.exports = defineConfig({
-  projectId: "1z2vqi",
+module.exports = defineConfig({  projectId: "1z2vqi",
   env: config.env,
   e2e: {
     setupNodeEvents(on, config) {
+      require('cypress-mochawesome-reporter/plugin')(on);
       cypressGrep(config);
       return config;
     },
@@ -33,14 +33,13 @@ module.exports = defineConfig({
     execTimeout: config.execTimeout,
     requestTimeout: config.requestTimeout,
     pageLoadTimeout: config.pageLoadTimeout,
-    responseTimeout: config.responseTimeout,
-    viewportWidth: config.viewportWidth,
+    responseTimeout: config.responseTimeout,    viewportWidth: config.viewportWidth,
     viewportHeight: config.viewportHeight
   },
-  reporter: 'mochawesome',
+  reporter: 'cypress-mochawesome-reporter',
   reporterOptions: {
     charts: true, //Genarates Chart in HTML report
-    reportPageTitle: 'OpenCart Test Report', //Report title will be set to the mentioned string
+    reportPageTitle: 'Cypress Unsplash Test Report', //Report title will be set to the mentioned string
     embeddedScreenshots: true, //Screenshot will be embedded within the report
     inlineAssets: true, //No separate assets folder will be created
     videoOnFailOnly: false, //If Videos are recorded and added to the report, setting this to true will add the videos only to tests with failures.

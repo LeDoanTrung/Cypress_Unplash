@@ -36,6 +36,7 @@
     "@cypress/grep": "^4.1.0",
     "cy2": "^4.0.9",
     "cypress": "^13.14.2",
+    "cypress-mochawesome-reporter": "^3.8.2",
     "cypress-parallel": "^0.14.0",
     "del-cli": "^5.1.0",
     "marge": "1.0.1",

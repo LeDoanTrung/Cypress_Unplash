@@ -51,7 +51,25 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # Creating a token https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            # Upload screenshots when tests fail
+          
+      # Tạo báo cáo HTML từ kết quả test
+      - name: Generate HTML Test Report
+        if: always()
+        run: |
+          npm i -D cypress-mochawesome-reporter mochawesome-merge mochawesome-report-generator
+          npx mochawesome-merge cypress/reports/mocha/*.json > cypress/reports/mochawesome.json || true
+          npx marge cypress/reports/mochawesome.json -f report -o cypress/reports/html || true
+          
+      # Upload báo cáo test như artifact
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-test-report
+          path: cypress/reports/html
+          retention-days: 30
+          
+      # Upload screenshots when tests fail
       - name: Upload Cypress screenshots
         uses: actions/upload-artifact@v4
         if: failure()
