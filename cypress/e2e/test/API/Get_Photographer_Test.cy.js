@@ -3,6 +3,7 @@ import { validateSchema } from '../../../support/extension/api_extension';
 import photographerSchema from '../../../resource/schema/photographer_schema.json';
 import portfolioSchema from '../../../resource/schema/portfolio_schema.json';
 import photosSchema from '../../../resource/schema/list_photos_schema.json';
+import likedPhotosSchema from '../../../resource/schema/liked_photos_schema.json';
 
 describe('Test request for getting Photographer Profile', { tags: ['@api'] }, function () {
 
