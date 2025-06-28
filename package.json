@@ -1,8 +1,7 @@
 {
   "name": "cypress_framework_unplash",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
+  "main": "index.js",  "scripts": {
     "open": "cypress open",
     "start": "cypress run --browser chrome --headed",
     "test:qa": "CYPRESS_ENV=qa cypress run --browser chrome --headed",
@@ -20,7 +19,9 @@
     "test:ui": "npx cypress run --env grepTags=@ui",
     "test:regression": "npx cypress run --env grepTags=@regression",
     "test:smoke": "npx cypress run --env grepTags=@smoke",
-    "test:happyCase": "npx cypress run --env grepTags=@happyCase"
+    "test:happyCase": "npx cypress run --env grepTags=@happyCase",
+    "test:api-with-report": "cypress run --spec \"cypress/e2e/test/API/**/*.cy.js\"",
+    "test:report": "npx mochawesome-merge cypress/reports/html/*.json > cypress/reports/mochawesome.json && npx marge cypress/reports/mochawesome.json -f report -o cypress/reports/html"
   },
   "keywords": [],
   "author": "Trung Le",
