@@ -17,12 +17,29 @@ function getConfigByEnvironment(env) {
 const environment = process.env.CYPRESS_ENV || 'qa';
 const config = getConfigByEnvironment(environment);
 
-module.exports = defineConfig({  projectId: "1z2vqi",
-  env: config.env,
-  e2e: {
+module.exports = defineConfig({
+  projectId: "1z2vqi",
+  env: {
+    ...config.env,
+    // Thêm biến môi trường cho API testing, lấy từ quy trình CI/CD nếu có
+    unsplashAccessKey: process.env.UNSPLASH_ACCESS_KEY || config.env.unsplashAccessKey,
+    unsplashSecretKey: process.env.UNSPLASH_SECRET_KEY || config.env.unsplashSecretKey,
+  },  e2e: {
     setupNodeEvents(on, config) {
       require('cypress-mochawesome-reporter/plugin')(on);
       cypressGrep(config);
+      
+      // Add event listener to handle failures better
+      on('task', {
+        log(message) {
+          console.log(message);
+          return null;
+        },
+      });
+      
+      // Detect CI environment
+      config.env.CI = process.env.CI || false;
+      
       return config;
     },
     
@@ -32,8 +49,8 @@ module.exports = defineConfig({  projectId: "1z2vqi",
     defaultCommandTimeout: config.defaultCommandTimeout,
     execTimeout: config.execTimeout,
     requestTimeout: config.requestTimeout,
-    pageLoadTimeout: config.pageLoadTimeout,
-    responseTimeout: config.responseTimeout,    viewportWidth: config.viewportWidth,
+    pageLoadTimeout: config.pageLoadTimeout,    responseTimeout: config.responseTimeout,
+    viewportWidth: config.viewportWidth,
     viewportHeight: config.viewportHeight
   },
   reporter: 'cypress-mochawesome-reporter',
