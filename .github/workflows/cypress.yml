@@ -7,8 +7,8 @@ on:
       - '**.md'
       - 'docs/**'
   schedule:
-    # Run daily at 9:00 AM UTC
-    - cron: '0 9 * * *'
+    # Run at 9:00 AM Vietnam time (2:00 AM UTC) on weekdays (Monday to Friday)
+    - cron: '0 2 * * 1-5'
   # Enable manual trigger from GitHub Actions tab
   workflow_dispatch:
     inputs:
@@ -291,10 +291,12 @@ jobs:
           # Extract Cypress Run ID from output log if available
           CYPRESS_RUN_ID=$(grep -o "Run URL: https://cloud.cypress.io/projects/1z2vqi/runs/[0-9a-z\-]*" $(find . -name "cypress.log" 2>/dev/null) 2>/dev/null | grep -o "[0-9a-z\-]*$" | head -1)
           
+          # Chỉ hiển thị link đến lần chạy cụ thể (nếu có ID)
           if [ -n "$CYPRESS_RUN_ID" ]; then
             echo "**[View run in Cypress Cloud](https://cloud.cypress.io/projects/1z2vqi/runs/$CYPRESS_RUN_ID)** 🔍" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "**[View run in Cypress Cloud](https://cloud.cypress.io/projects/1z2vqi/runs)** 🔍" >> $GITHUB_STEP_SUMMARY
+          else 
+            # Nếu không tìm thấy ID, sử dụng cách khác để trích xuất thông tin
+            echo "**[View runs in Cypress Cloud](https://cloud.cypress.io/projects/1z2vqi)** 🔍" >> $GITHUB_STEP_SUMMARY
           fi
 
           # Write the consolidated summary
@@ -484,9 +486,48 @@ jobs:
           if-no-files-found: warn
           compression-level: 9
           
-      # Add notification placeholder - in real world, send notification via webhook/email
-      - name: Send Notifications
+      # Send notification via email - Uncomment and add secrets for email notifications
+      # - name: Send Email Notification
+      #   if: always()
+      #   uses: dawidd6/action-send-mail@v3
+      #   with:
+      #     server_address: ${{ secrets.MAIL_SERVER }}
+      #     server_port: 465
+      #     username: ${{ secrets.MAIL_USERNAME }}
+      #     password: ${{ secrets.MAIL_PASSWORD }}
+      #     subject: "[${{ job.status }}] Cypress API Tests - Daily Scheduled Run"
+      #     body: |
+      #       Cypress API Tests Daily Scheduled Run completed with status: ${{ job.status }}
+      #       
+      #       Environment: ${{ github.event.inputs.environment || env.DEFAULT_ENVIRONMENT }}
+      #       Date: $(date)
+      #       Workflow: ${{ github.workflow }}
+      #       Run Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      #       
+      #       See attachment for detailed test results
+      #     to: ${{ secrets.NOTIFICATION_EMAIL }}
+      #     from: GitHub Actions
+      #     attachments: ./failure-analysis/failure-report.html,./failure-analysis/diagnostics/system-info.txt
+          
+      # Send notification via Slack - Uncomment and add secrets for Slack notifications
+      # - name: Send Slack Notification
+      #   if: always()
+      #   uses: rtCamp/action-slack-notify@v2
+      #   env:
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      #     SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL || 'test-notifications' }}
+      #     SLACK_COLOR: ${{ job.status == 'success' && 'good' || job.status == 'cancelled' && 'warning' || 'danger' }}
+      #     SLACK_TITLE: "Cypress API Tests - Daily Scheduled Run"
+      #     SLACK_MESSAGE: "Status: ${{ job.status }}\nEnvironment: ${{ github.event.inputs.environment || env.DEFAULT_ENVIRONMENT }}"
+      #     SLACK_FOOTER: "See details at https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+      # Console message (default enabled option)
+      - name: Log Notification to Console
         run: |
-          echo "Sending failure notifications to the team..."
-          echo "This step would integrate with notification services in a real-world scenario"
+          echo "========================================="
+          echo "CYPRESS API TESTS COMPLETED: ${{ job.status }}"
+          echo "Date: $(date)"
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "========================================="
 
