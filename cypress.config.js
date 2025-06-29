@@ -21,16 +21,16 @@ module.exports = defineConfig({
   projectId: "1z2vqi",
   env: {
     ...config.env,
-    // Thêm biến môi trường cho API testing, lấy từ quy trình CI/CD nếu có
+    // Add environment variables for API testing, sourced from CI/CD pipeline if available
     unsplashAccessKey: process.env.UNSPLASH_ACCESS_KEY || config.env.unsplashAccessKey,
     unsplashSecretKey: process.env.UNSPLASH_SECRET_KEY || config.env.unsplashSecretKey,
   },  e2e: {
     setupNodeEvents(on, config) {
-      // Sử dụng spec reporter đơn giản hơn thay vì mochawesome
+      // Use the simpler spec reporter instead of mochawesome
       on('before:run', () => {
         console.log('Setting up test run...');
         
-        // Đảm bảo thư mục báo cáo tồn tại
+        // Ensure the reports directory exists
         const fs = require('fs');
         const path = require('path');
         const reportsDir = path.join(__dirname, 'cypress/reports');
@@ -40,15 +40,15 @@ module.exports = defineConfig({
         }
       });
       
-      // Ghi lại kết quả test để sử dụng sau này
+      // Record test results for later use
       on('after:spec', (spec, results) => {
         if (results && results.video) {
-          // Đường dẫn đến video
+          // Path to the video file
           const videoPath = results.video;
           console.log(`Video created at: ${videoPath}`);
         }
         
-        // Lưu kết quả test vào file JSON
+        // Save test results to a JSON file
         const fs = require('fs');
         const path = require('path');
         const reportPath = path.join(__dirname, 'cypress/reports', `${path.basename(spec.name, '.js')}.json`);
@@ -86,13 +86,13 @@ module.exports = defineConfig({
       // Detect CI environment
       config.env.CI = process.env.CI || false;
       
-      // Tạo thư mục báo cáo trước khi chạy test
+      // Create report directories before running tests
       on('before:run', () => {
         console.log('Setting up test run and reports directory...');
         const fs = require('fs');
         const path = require('path');
         
-        // Tạo các thư mục báo cáo cần thiết
+        // Create necessary report directories
         const dirs = [
           path.join(__dirname, 'cypress/reports'),
           path.join(__dirname, 'cypress/reports/html'),

@@ -19,14 +19,14 @@ import './element.command';
 import '@cypress/grep';
 require('cypress-xpath');
 
-// Hook chạy trước mỗi test
+// Hook that runs before each test
 before(function() {
   cy.log('Starting test execution');
 });
 
-// Ghi lại kết quả test sau khi test hoàn thành
+// Record test results after test completion
 after(function() {
-  // Lấy kết quả từ Mocha test runner
+  // Get results from Mocha test runner
   const testResults = {
     passed: this.currentTest?.state === 'passed',
     title: this.currentTest?.title,
@@ -34,7 +34,7 @@ after(function() {
     timestamp: new Date().toISOString()
   };
 
-  // Tạo báo cáo đơn giản
+  // Create a simple report
   const reportContent = `
     <!DOCTYPE html>
     <html>
@@ -54,7 +54,7 @@ after(function() {
     </html>
   `;
 
-  // Lưu báo cáo bằng task
+  // Save report using custom task
   cy.task('writeReport', { 
     report: reportContent,
     filename: 'simple-report.html'

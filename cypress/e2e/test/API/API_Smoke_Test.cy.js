@@ -8,27 +8,27 @@ describe('API Smoke Tests', { tags: ['@api', '@smoke'] }, function () {
       url: 'https://jsonplaceholder.typicode.com/posts/1',
       failOnStatusCode: false
     }).then((response) => {
-      // Kiểm tra response status dù là gì
+      // Verify the response status regardless of the value
       expect(response.status).to.be.oneOf([200, 201, 404, 500]);
       cy.task('log', `Status code: ${response.status}`);
     });
   });
   
   it('Should write a simple test report', function() {
-    // Tạo dữ liệu báo cáo
+    // Create report data
     const reportData = {
       testName: 'API Smoke Test',
       timestamp: new Date().toISOString(),
       passed: true
     };
     
-    // Ghi báo cáo đơn giản
+    // Write JSON report
     cy.task('writeReport', {
       report: JSON.stringify(reportData, null, 2),
       filename: 'api-report.json'
     });
     
-    // Ghi báo cáo HTML
+    // Write HTML report
     const htmlReport = `
       <html>
         <head>
