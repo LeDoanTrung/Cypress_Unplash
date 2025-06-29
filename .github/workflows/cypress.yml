@@ -116,7 +116,7 @@ jobs:
         with:
           # Only run simple API tests, exclude GetPhotographer Test
           spec: "cypress/e2e/test/API/{API_Smoke_Test,Simple_API_Test}.cy.js"
-          record: false # Temporarily disabled - change to 'true' after setting up CYPRESS_RECORD_KEY in GitHub Secrets
+          record: true # Enable Cypress Cloud recording
           config-file: cypress.config.js
           config: "retries=2,video=true,screenshotOnRunFailure=true,reporter=json,reporterOptions={\"outputFile\":\"cypress/results/results.json\"}"
           browser: chrome
@@ -287,7 +287,16 @@ jobs:
           else
             STATUS="Failing 🔴"
           fi
+                    
+          # Extract Cypress Run ID from output log if available
+          CYPRESS_RUN_ID=$(grep -o "Run URL: https://cloud.cypress.io/projects/1z2vqi/runs/[0-9a-z\-]*" $(find . -name "cypress.log" 2>/dev/null) 2>/dev/null | grep -o "[0-9a-z\-]*$" | head -1)
           
+          if [ -n "$CYPRESS_RUN_ID" ]; then
+            echo "**[View run in Cypress Cloud](https://cloud.cypress.io/projects/1z2vqi/runs/$CYPRESS_RUN_ID)** 🔍" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**[View run in Cypress Cloud](https://cloud.cypress.io/projects/1z2vqi/runs)** 🔍" >> $GITHUB_STEP_SUMMARY
+          fi
+
           # Write the consolidated summary
           
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -304,9 +313,6 @@ jobs:
           echo "### 🔗 Artifacts" >> $GITHUB_STEP_SUMMARY
           echo "⬇️ [Download Artifacts](https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})" >> $GITHUB_STEP_SUMMARY
           
-      # Note: Unique Run ID generation and README generation steps have been removed
-      # to improve workflow performance
-      
       # Consolidated upload of all test artifacts
       - name: Upload All Test Artifacts
         if: always()
