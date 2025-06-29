@@ -17,7 +17,9 @@
 import './api.commands';
 import './element.command';
 import '@cypress/grep';
-require('cypress-xpath')
+require('cypress-xpath');
+// Import Mochawesome reporter for proper initialization
+import 'cypress-mochawesome-reporter/register';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 

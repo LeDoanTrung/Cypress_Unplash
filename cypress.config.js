@@ -26,8 +26,21 @@ module.exports = defineConfig({
     unsplashSecretKey: process.env.UNSPLASH_SECRET_KEY || config.env.unsplashSecretKey,
   },  e2e: {
     setupNodeEvents(on, config) {
-      // Setup Mochawesome reporter
-      require('cypress-mochawesome-reporter/plugin')(on);
+      // Cấu hình Mochawesome reporter đúng cách
+      const reporterOptions = {
+        charts: true, // Tạo biểu đồ trong báo cáo HTML
+        reportPageTitle: 'Cypress Unsplash Test Report', // Tiêu đề báo cáo
+        embeddedScreenshots: true, // Screenshots được nhúng vào báo cáo
+        inlineAssets: true, // Không tạo thư mục assets riêng
+        reportDir: 'cypress/reports/html', // Thư mục chứa báo cáo
+        overwrite: false, // Không ghi đè các báo cáo cũ
+        html: true, // Tạo báo cáo HTML
+        json: true, // Tạo báo cáo JSON
+        quiet: true, // Tránh log quá nhiều
+      };
+
+      // Gọi plugin Mochawesome và truyền tùy chọn
+      require('cypress-mochawesome-reporter/plugin')(on, reporterOptions);
       
       // Setup Cypress Grep
       cypressGrep(config);
@@ -43,23 +56,24 @@ module.exports = defineConfig({
       // Detect CI environment
       config.env.CI = process.env.CI || false;
       
-      // Add a better debug capability
-      on('before:browser:launch', (browser, launchOptions) => {
-        console.log('Launching browser:', browser.name);
-        return launchOptions;
-      });
-      
-      // Add before:run event to ensure report directory exists
+      // Tạo thư mục báo cáo trước khi chạy test
       on('before:run', () => {
         console.log('Setting up test run and reports directory...');
         const fs = require('fs');
         const path = require('path');
         
-        // Create the report directory structure if it doesn't exist
-        const reportsPath = path.join(__dirname, 'cypress/reports/html');
-        if (!fs.existsSync(reportsPath)) {
-          fs.mkdirSync(reportsPath, { recursive: true });
-        }
+        // Tạo các thư mục báo cáo cần thiết
+        const dirs = [
+          path.join(__dirname, 'cypress/reports'),
+          path.join(__dirname, 'cypress/reports/html'),
+          path.join(__dirname, 'cypress/reports/json'),
+        ];
+        
+        dirs.forEach(dir => {
+          if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+          }
+        });
       });
       
       return config;
@@ -76,14 +90,16 @@ module.exports = defineConfig({
     viewportHeight: config.viewportHeight
   },  reporter: 'cypress-mochawesome-reporter',
   reporterOptions: {
-    charts: true, //Generates Chart in HTML report
-    reportPageTitle: 'Cypress Unsplash Test Report', //Report title will be set to the mentioned string
-    embeddedScreenshots: true, //Screenshot will be embedded within the report
-    inlineAssets: true, //No separate assets folder will be created
-    videoOnFailOnly: false, //If Videos are recorded and added to the report, setting this to true will add the videos only to tests with failures.
+    charts: true,
+    reportPageTitle: 'Cypress Unsplash API Test Report',
+    embeddedScreenshots: true,
+    inlineAssets: true,
+    videoOnFailOnly: false,
     reportDir: 'cypress/reports/html',
     overwrite: false,
-    html: false,
-    json: true
+    html: true,
+    json: true,
+    jsonDir: 'cypress/reports/json',
+    quiet: true
   }
 });
