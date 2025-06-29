@@ -94,20 +94,14 @@ jobs:
         uses: cypress-io/github-action@v6
         continue-on-error: true # Continue workflow even if tests fail
         with:
-          # Run smoke tests with improved configuration
-          spec: "cypress/e2e/test/API/API_Smoke_Test.cy.js"
+          # Run API tests with improved configuration
+          spec: "cypress/e2e/test/API/*.cy.js"
           record: false # Disable recording to avoid record key error
-          parallel: false
-          config: |
-            retries=2,
-            video=true,
-            screenshotOnRunFailure=true,
-            reporter=junit,
-            reporterOptions={mochaFile:'cypress/reports/junit/test-results.[hash].xml'}
+          config-file: cypress.config.js
+          config: "retries=2"
           browser: chrome
           headed: false
           wait-on-timeout: 60
-          tag: api-tests,smoke
         env:
           # Pass GitHub token securely
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -223,26 +217,46 @@ jobs:
           
           echo "" >> $GITHUB_STEP_SUMMARY
           
+          # Count test files and executed tests
+          TEST_FILES_COUNT=$(find cypress/e2e/test/API -name "*.cy.js" | wc -l)
+          VIDEOS_COUNT=$(find cypress/videos -type f | wc -l)
+          SCREENSHOTS_COUNT=$(find cypress/screenshots -type f | wc -l)
+          REPORTS_COUNT=$(find cypress/reports -name "*.html" | wc -l)
+          
+          # Try to extract actual test counts from Allure results if available
+          if [ -d "allure-results" ]; then
+            TOTAL_TESTS=$(ls allure-results/*.json | wc -l)
+            PASSED_TESTS=$(grep -l '"status": "passed"' allure-results/*.json | wc -l)
+            FAILED_TESTS=$(grep -l '"status": "failed"' allure-results/*.json | wc -l)
+            SKIPPED_TESTS=$(grep -l '"status": "skipped"' allure-results/*.json | wc -l)
+            
+            echo "### Test Results Summary" >> $GITHUB_STEP_SUMMARY
+            echo "| Result | Total ⚪ | Passed ✅ | Failed ❌ | Skipped ↩️ |" >> $GITHUB_STEP_SUMMARY
+            echo "| --- | --- | --- | --- | --- |" >> $GITHUB_STEP_SUMMARY
+            echo "| Count | $TOTAL_TESTS | $PASSED_TESTS | $FAILED_TESTS | $SKIPPED_TESTS |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
           # Test metrics table
           echo "| Category | Count |" >> $GITHUB_STEP_SUMMARY
           echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🎬 Videos | $(find cypress/videos -type f | wc -l) |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🖼️ Screenshots | $(find cypress/screenshots -type f | wc -l) |" >> $GITHUB_STEP_SUMMARY
-          echo "| 📄 Reports | $(find cypress/reports -name "*.html" | wc -l) |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🧪 Test Files | $(find cypress/e2e/test/API -name "*.cy.js" | wc -l) |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🎬 Videos | $VIDEOS_COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🖼️ Screenshots | $SCREENSHOTS_COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📄 Reports | $REPORTS_COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🧪 Test Files | $TEST_FILES_COUNT |" >> $GITHUB_STEP_SUMMARY
           
           # Add more specific API test information
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🧪 API Tests Executed" >> $GITHUB_STEP_SUMMARY
           
           # Extract test names from results or files
-          API_TESTS=$(grep -r "it(" cypress/e2e/test/API --include="*.cy.js" | sed 's/.*it(\s*["'"'"']\(.*\)["'"'"'].*$/\1/' | head -5)
+          API_TESTS=$(grep -r "it\(\|it.only\(\|it\.skip(" cypress/e2e/test/API --include="*.cy.js" | grep -v "function" | sed 's/.*\(it\|it\.only\|it\.skip\)(\s*["'"'"']\(.*\)["'"'"'].*$/\2/' | head -10)
           if [ -n "$API_TESTS" ]; then
             while IFS= read -r test; do
               echo "- $test" >> $GITHUB_STEP_SUMMARY
             done <<< "$API_TESTS"
           else
-            echo "- API Smoke Tests" >> $GITHUB_STEP_SUMMARY
+            echo "- API Tests" >> $GITHUB_STEP_SUMMARY
           fi
           
           # Environment information
@@ -258,39 +272,15 @@ jobs:
           echo "### 🔗 Artifacts" >> $GITHUB_STEP_SUMMARY
           echo "⬇️ [Download Artifacts](https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})" >> $GITHUB_STEP_SUMMARY
           
-      # Combined artifact upload with unique run ID to avoid conflicts
-      - name: Generate Unique Run ID
-        id: runid
-        if: always()
-        run: |
-          # Generate unique identifier using date and random string
-          UNIQUE_ID="run-$(date +%Y%m%d%H%M%S)-$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 6 | head -n 1)"
-          echo "UNIQUE_ID=$UNIQUE_ID" >> $GITHUB_OUTPUT
-          echo "Using unique ID: $UNIQUE_ID"
-      
-      # Create an informative README for the artifacts
-      - name: Generate README for artifacts
-        if: always()
-        run: |
-          echo "Creating README for test artifacts navigation..."
-          
-          # Copy README template from repository
-          cp .github/templates/readme_template.md cypress/reports/README.md
-          
-          # Replace placeholders with actual data
-          sed -i "s/{{DATE}}/$(date)/g" cypress/reports/README.md
-          sed -i "s/{{ENVIRONMENT}}/$CYPRESS_ENV/g" cypress/reports/README.md
-          sed -i "s/{{WORKFLOW}}/$GITHUB_WORKFLOW/g" cypress/reports/README.md
-          sed -i "s/{{NODE_VERSION}}/$(node -v)/g" cypress/reports/README.md
-          
-          echo "Artifacts README created successfully"
+      # Note: Unique Run ID generation and README generation steps have been removed
+      # to improve workflow performance
       
       # Consolidated upload of all test artifacts
       - name: Upload All Test Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-test-results-${{ steps.runid.outputs.UNIQUE_ID }}
+          name: cypress-test-results-${{ github.run_id }}
           path: |
             cypress/reports/
             cypress/screenshots/

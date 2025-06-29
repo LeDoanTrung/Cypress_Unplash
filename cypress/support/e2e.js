@@ -19,23 +19,31 @@ import './element.command';
 import '@cypress/grep';
 require('cypress-xpath');
 
-// Register Allure reporting commands if enabled
-if (Cypress.env('ALLURE')) {
-  import('@shelex/cypress-allure-plugin');
-}
+// Import and register Allure reporter plugin 
+import '@shelex/cypress-allure-plugin';
 
 // Hook that runs before each test
 before(function() {
   cy.log('Starting test execution');
+  
+  // Register Allure test case reporting if enabled
+  if (Cypress.env('CYPRESS_ALLURE') === 'true' || Cypress.env('allure') === true) {
+    cy.allure().feature(Cypress.currentTest.titlePath[0]);
+    cy.allure().story(Cypress.currentTest.titlePath[1]);
+  }
 });
 
 // Record test results after test completion
 after(function() {
-  // Get results from Mocha test runner
+  // Get results from Mocha test runner with better reliability
   const testResults = {
     passed: this.currentTest?.state === 'passed',
     title: this.currentTest?.title,
-    testCount: Cypress.mocha.getRunner().suite.suites[0]?._beforeAll.length || 0,
+    // More reliable way to count tests
+    testCount: Cypress._.filter(
+      Cypress.mocha.getRunner().suite.eachTest(t => t),
+      { type: 'test' }
+    ).length,
     timestamp: new Date().toISOString()
   };
 

@@ -25,14 +25,30 @@ module.exports = defineConfig({
     // Add environment variables for API testing, sourced from CI/CD pipeline if available
     unsplashAccessKey: process.env.UNSPLASH_ACCESS_KEY || config.env.unsplashAccessKey,
     unsplashSecretKey: process.env.UNSPLASH_SECRET_KEY || config.env.unsplashSecretKey,
-  },  e2e: {
+    allure: process.env.CYPRESS_ALLURE === 'true'
+  },  
+  e2e: {
+    reporter: process.env.CYPRESS_CI ? 'junit' : 'spec',
+    reporterOptions: {
+      mochaFile: 'cypress/reports/junit/test-results.[hash].xml',
+      toConsole: true
+    },
+    video: true,
+    screenshotOnRunFailure: true,
     setupNodeEvents(on, config) {
       // Register cypress grep plugin
       cypressGrep(on, config);
       
-      // Register Allure reporter plugin
+      // Register Allure reporter plugin with improved configuration
       if (process.env.CYPRESS_ALLURE) {
-        allureWriter(on, config);
+        // Configure Allure with better test result reporting
+        allureWriter(on, config, {
+          resultDir: "allure-results",
+          allureEnabled: true,
+          reportDir: "allure-report",
+          clearSkippedTests: false,
+          frameworkEnabled: true
+        });
         
         // Create a results directory for Allure
         on('before:run', () => {
@@ -133,10 +149,9 @@ module.exports = defineConfig({
     defaultCommandTimeout: config.defaultCommandTimeout,
     execTimeout: config.execTimeout,
     requestTimeout: config.requestTimeout,
-    pageLoadTimeout: config.pageLoadTimeout,    responseTimeout: config.responseTimeout,
+    pageLoadTimeout: config.pageLoadTimeout,
+    responseTimeout: config.responseTimeout,
     viewportWidth: config.viewportWidth,
     viewportHeight: config.viewportHeight
-  },  reporter: 'spec',
-  video: true,
-  screenshotOnRunFailure: true
+  }
 });
