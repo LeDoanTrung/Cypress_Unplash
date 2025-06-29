@@ -26,8 +26,21 @@ module.exports = defineConfig({
     unsplashSecretKey: process.env.UNSPLASH_SECRET_KEY || config.env.unsplashSecretKey,
   },  e2e: {
     setupNodeEvents(on, config) {
-      // Cấu hình Mochawesome reporter theo cách đơn giản nhất
-      require('cypress-mochawesome-reporter/plugin')(on);
+      // Cấu hình Mochawesome reporter
+      const options = {
+        reportDir: 'cypress/reports',
+        charts: true,
+        reportPageTitle: 'Cypress API Test Report',
+        embeddedScreenshots: true,
+        inlineAssets: true
+      };
+      
+      // Khởi tạo plugin với options
+      on('before:run', () => {
+        console.log('Setting up Mochawesome reporter...');
+      });
+      
+      require('cypress-mochawesome-reporter/plugin')(on, options);
       
       // Setup Cypress Grep
       cypressGrep(config);
@@ -88,14 +101,5 @@ module.exports = defineConfig({
     pageLoadTimeout: config.pageLoadTimeout,    responseTimeout: config.responseTimeout,
     viewportWidth: config.viewportWidth,
     viewportHeight: config.viewportHeight
-  },  reporter: 'cypress-mochawesome-reporter',
-  reporterOptions: {
-    charts: true,
-    reportDir: 'cypress/reports',
-    reportFilename: 'report',
-    overwrite: true,
-    html: true,
-    json: true,
-    embeddedScreenshots: true
-  }
+  },  reporter: 'cypress-mochawesome-reporter'
 });

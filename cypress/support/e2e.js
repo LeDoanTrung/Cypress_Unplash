@@ -19,19 +19,12 @@ import './element.command';
 import '@cypress/grep';
 require('cypress-xpath');
 
-// Import Mochawesome reporter cho báo cáo
+// Thiết lập Mochawesome reporter
 import 'cypress-mochawesome-reporter/register';
 
-// Đảm bảo rằng có thư mục báo cáo
-before(() => {
-  cy.task('log', 'Setting up test report directories');
-});
-
-// Thêm hook để xử lý các lỗi và vẫn tạo báo cáo
-Cypress.on('test:after:run', (test, runnable) => {
-  if (test.state === 'failed') {
-    console.log(`Test failed: ${test.title}`);
-  }
+// Hook chạy trước mỗi test
+before(function() {
+  cy.log('Starting test execution');
 });
 
 // Alternatively you can use CommonJS syntax:
