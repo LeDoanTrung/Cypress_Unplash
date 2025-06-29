@@ -288,21 +288,6 @@ jobs:
           fi
           
           # Write the consolidated summary
-          echo "## Cypress Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Result | Passed ✅ | Failed ❌ | Pending ✋ | Skipped ↩️ | Duration 🕗 |" >> $GITHUB_STEP_SUMMARY
-          echo "| --- | --- | --- | --- | --- | --- |" >> $GITHUB_STEP_SUMMARY
-          echo "| $STATUS | $PASSED_TESTS | $FAILED_TESTS | $PENDING_TESTS | 0 | $DURATION |" >> $GITHUB_STEP_SUMMARY
-          
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📊 Test Resources" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Category | Count |" >> $GITHUB_STEP_SUMMARY
-          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🎬 Videos | $VIDEOS_COUNT |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🖼️ Screenshots | $SCREENSHOTS_COUNT |" >> $GITHUB_STEP_SUMMARY
-          echo "| 📄 Reports | $REPORTS_COUNT |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🧪 Test Files | $TEST_FILES_COUNT |" >> $GITHUB_STEP_SUMMARY
           
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🔄 Environment" >> $GITHUB_STEP_SUMMARY
@@ -498,4 +483,3 @@ jobs:
           echo "Sending failure notifications to the team..."
           echo "This step would integrate with notification services in a real-world scenario"
 
-          
