@@ -11,6 +11,7 @@
     "clean-allure": "rimraf allure-results/* allure-report",
     "prepare-reports": "mkdir -p cypress/reports/.jsons",
     "test:api-ci": "npm run clean-reports && npm run prepare-reports && cypress run --spec \"cypress/e2e/test/API/Simple_API_Test.cy.js\"",
+    "test:api-simple": "npm run clean-reports && cypress run --spec \"cypress/e2e/test/API/API_Smoke_Test.cy.js,cypress/e2e/test/API/Simple_API_Test.cy.js\"",
     "test:api": "npm run clean-reports && cypress run --spec \"cypress/e2e/test/API/*.cy.js\"",
     "test:api-debug": "npm run clean-reports && cypress run --browser chrome --headed --spec \"cypress/e2e/test/API/*.cy.js\"",
     "test:api-allure": "npm run clean-reports && npm run clean-allure && cypress run --spec \"cypress/e2e/test/API/*.cy.js\" --env CYPRESS_ALLURE=true",
