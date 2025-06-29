@@ -81,6 +81,13 @@ jobs:
           npx cypress verify
           echo "Cypress installation verified"
         
+      # Install Allure and other reporting tools
+      - name: Install Allure and other dependencies
+        run: |
+          echo "Installing Allure and other reporting dependencies..."
+          npm install -D @shelex/cypress-allure-plugin allure-commandline mocha-junit-reporter
+          echo "Dependencies installed successfully"
+
       # Run tests with proper error handling and retries
       - name: Run Cypress API tests
         id: cypress_tests
@@ -89,9 +96,14 @@ jobs:
         with:
           # Run smoke tests with improved configuration
           spec: "cypress/e2e/test/API/API_Smoke_Test.cy.js"
-          record: true
+          record: false # Disable recording to avoid record key error
           parallel: false
-          config: "retries=2,video=true,screenshotOnRunFailure=true"
+          config: |
+            retries=2,
+            video=true,
+            screenshotOnRunFailure=true,
+            reporter=junit,
+            reporterOptions={mochaFile:'cypress/reports/junit/test-results.[hash].xml'}
           browser: chrome
           headed: false
           wait-on-timeout: 60
@@ -103,6 +115,7 @@ jobs:
           CYPRESS_ENV: ${{ github.event.inputs.environment || 'qa' }}
           CYPRESS_CI: true
           CYPRESS_INCLUDE_TAGS: '@api'  # Ensure only tests with @api tag are run
+          CYPRESS_ALLURE: true
           
       # Debug information with improved diagnostics
       - name: Collect test diagnostics
@@ -126,72 +139,73 @@ jobs:
           
           echo "::endgroup::"
           
-      # Generate professional HTML report
-      - name: Generate Professional Test Report
+      # Generate Allure Report
+      - name: Generate Allure Report
         if: always()
         run: |
-          echo "::group::Professional Test Report Generation"
-          echo "Generating enterprise-grade test report..."
+          echo "::group::Allure Report Generation"
+          echo "Generating professional Allure report..."
+
+          # Create report directory
+          mkdir -p allure-results
+          mkdir -p allure-report
+          mkdir -p cypress/reports/allure
           
-          # Create report directory structure
-          mkdir -p cypress/reports/html
-          mkdir -p cypress/reports/assets
-          
-          # Check for existing reports
-          if [ -f "cypress/reports/simple-report.html" ]; then
-            echo "Found existing report from test framework, enhancing it..."
+          # Move Cypress results to allure-results if they exist
+          if [ -d "cypress/results" ]; then
+            cp -r cypress/results/* allure-results/ || echo "No results found in cypress/results"
           fi
-            
-          # Create data.js with test metrics
-          echo "Gathering comprehensive test metrics..."
+          
+          # Collect test metrics for summary
           VIDEO_COUNT=$(find cypress/videos -type f | wc -l)
           SCREENSHOT_COUNT=$(find cypress/screenshots -type f | wc -l)
-          JSON_COUNT=$(find cypress/reports -name "*.json" | wc -l)
-          SPEC_FILES=$(find cypress/e2e -name "*.cy.js" | wc -l)
-          TEST_FILES=$(find cypress/e2e -name "*.cy.js" -o -name "*.spec.js" | wc -l)
-          FIXTURE_COUNT=$(find cypress/fixtures -type f | wc -l)
+          XML_COUNT=$(find cypress/reports/junit -name "*.xml" | wc -l)
+          TEST_FILES=$(find cypress/e2e/test/API -name "*.cy.js" | wc -l)
           
-          # Get test run time details
-          START_TIME=$(date +"%Y-%m-%d %H:%M:%S")
+          # Generate Allure report from results
+          echo "Generating Allure report from test results..."
+          npx allure generate allure-results --clean -o allure-report
           
-          # Extract test names from files
-          echo "Extracting test information..."
-          TEST_NAMES=$(grep -r "it(" cypress/e2e/test/API --include="*.cy.js" | sed 's/.*it(\s*["'"'"']\(.*\)["'"'"'].*$/\1/' | head -5 | tr '\n' ',' | sed 's/,$//')
-          
-          # Copy HTML template from repository
-          echo "Copying HTML report template..."
-          cp .github/templates/report_template.html cypress/reports/html/index.html
-          
-          # Now replace placeholders with actual data
-          echo "Populating report with real data..."
-          sed -i "s/ENV_PLACEHOLDER/$CYPRESS_ENV/g" cypress/reports/html/index.html
-          sed -i "s/WORKFLOW_PLACEHOLDER/$GITHUB_WORKFLOW/g" cypress/reports/html/index.html
-          sed -i "s/START_TIME_PLACEHOLDER/$START_TIME/g" cypress/reports/html/index.html
-          sed -i "s/GENERATION_DATE_PLACEHOLDER/$(date)/g" cypress/reports/html/index.html
-          sed -i "s/NODE_VERSION_PLACEHOLDER/$(node -v)/g" cypress/reports/html/index.html
-          sed -i "s/NPM_VERSION_PLACEHOLDER/$(npm -v)/g" cypress/reports/html/index.html
-          sed -i "s/VIDEO_COUNT_PLACEHOLDER/$VIDEO_COUNT/g" cypress/reports/html/index.html
-          sed -i "s/SCREENSHOT_COUNT_PLACEHOLDER/$SCREENSHOT_COUNT/g" cypress/reports/html/index.html
-          sed -i "s/JSON_COUNT_PLACEHOLDER/$JSON_COUNT/g" cypress/reports/html/index.html
-          sed -i "s/TEST_FILES_PLACEHOLDER/$TEST_FILES/g" cypress/reports/html/index.html
-          
-          # Create test item entries
-          TEST_ITEMS=""
-          if [ -n "$TEST_NAMES" ]; then
-            IFS=',' read -ra TESTS <<< "$TEST_NAMES"
-            for i in "${!TESTS[@]}"; do
-              TEST_ITEMS="$TEST_ITEMS{name: \"${TESTS[$i]}\", status: \"passed\", duration: \"$(( ( RANDOM % 5 ) + 1 ))s\"},"
-            done
-          else
-            # Default test items if no tests were found
-            TEST_ITEMS='{name: "API Smoke Test", status: "passed", duration: "1.2s"},{name: "Authentication Test", status: "passed", duration: "0.8s"},{name: "Data Retrieval Test", status: "passed", duration: "1.5s"}'
-          fi
-          sed -i "s/TEST_ITEMS_PLACEHOLDER/$TEST_ITEMS/g" cypress/reports/html/index.html
-          
-          # Create a basic index for artifact navigation
-          echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; URL='html/index.html'\" /></head><body><p>Redirecting to test report...</p></body></html>" > cypress/reports/index.html
-          
-          echo "Professional HTML report generated successfully"
+          # Create a simple redirect HTML file
+          echo "Creating report navigation files..."
+          echo "<html><head><meta http-equiv=\"refresh\" content=\"0; URL='allure-report/index.html'\"></head><body>Redirecting to Allure report...</body></html>" > cypress/reports/index.html
+
+          # Create a helpful README for navigating artifacts
+          echo "# Cypress API Test Results with Allure" > cypress/reports/README.md
+          echo "" >> cypress/reports/README.md
+          echo "This artifact contains the results of Cypress API tests run on $(date)." >> cypress/reports/README.md
+          echo "" >> cypress/reports/README.md
+          echo "## Contents" >> cypress/reports/README.md
+          echo "" >> cypress/reports/README.md
+          echo "- \`/allure-report/\` - Allure HTML report with detailed test results" >> cypress/reports/README.md
+          echo "- \`/cypress/screenshots/\` - Screenshots captured during test failures (if any)" >> cypress/reports/README.md
+          echo "- \`/cypress/videos/\` - Video recordings of test runs" >> cypress/reports/README.md
+          echo "" >> cypress/reports/README.md
+          echo "## Test Summary" >> cypress/reports/README.md
+          echo "" >> cypress/reports/README.md
+          echo "- **Videos:** ${VIDEO_COUNT}" >> cypress/reports/README.md
+          echo "- **Screenshots:** ${SCREENSHOT_COUNT}" >> cypress/reports/README.md
+          echo "- **XML Reports:** ${XML_COUNT}" >> cypress/reports/README.md
+          echo "- **Test Files:** ${TEST_FILES}" >> cypress/reports/README.md
+          echo "" >> cypress/reports/README.md
+          echo "## Viewing the Report" >> cypress/reports/README.md
+          echo "" >> cypress/reports/README.md
+          echo "- Start by opening the [Allure Report](./allure-report/index.html)" >> cypress/reports/README.md
+          echo "- Videos of test runs are in the [videos folder](./cypress/videos/)" >> cypress/reports/README.md
+          echo "- Screenshots taken during test failures are in the [screenshots folder](./cypress/screenshots/)" >> cypress/reports/README.md
+          echo "" >> cypress/reports/README.md
+          echo "## Environment Information" >> cypress/reports/README.md
+          echo "" >> cypress/reports/README.md
+          echo "- **Environment:** ${CYPRESS_ENV}" >> cypress/reports/README.md
+          echo "- **Workflow:** ${GITHUB_WORKFLOW}" >> cypress/reports/README.md
+          echo "- **Run Date:** $(date)" >> cypress/reports/README.md
+          echo "- **Node Version:** $(node -v)" >> cypress/reports/README.md
+          echo "" >> cypress/reports/README.md
+          echo "---" >> cypress/reports/README.md
+          echo "" >> cypress/reports/README.md
+          echo "*This artifact was automatically generated by the GitHub Actions workflow*" >> cypress/reports/README.md
+
+          echo "Allure report generation completed successfully"
           echo "::endgroup::"
           
       # Add summary to workflow
@@ -281,6 +295,7 @@ jobs:
             cypress/reports/
             cypress/screenshots/
             cypress/videos/
+            allure-report/
           retention-days: 30
           if-no-files-found: warn
           compression-level: 9

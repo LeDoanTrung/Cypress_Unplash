@@ -2,6 +2,7 @@ const { defineConfig } = require("cypress");
 const fs = require('fs');
 const path = require('path');
 const cypressGrep = require('@cypress/grep/src/plugin');
+const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 
 
 
@@ -26,6 +27,23 @@ module.exports = defineConfig({
     unsplashSecretKey: process.env.UNSPLASH_SECRET_KEY || config.env.unsplashSecretKey,
   },  e2e: {
     setupNodeEvents(on, config) {
+      // Register cypress grep plugin
+      cypressGrep(on, config);
+      
+      // Register Allure reporter plugin
+      if (process.env.CYPRESS_ALLURE) {
+        allureWriter(on, config);
+        
+        // Create a results directory for Allure
+        on('before:run', () => {
+          console.log('Setting up Allure reporting...');
+          const resultsDir = path.join(__dirname, 'allure-results');
+          if (!fs.existsSync(resultsDir)) {
+            fs.mkdirSync(resultsDir, { recursive: true });
+          }
+        });
+      }
+      
       // Use the simpler spec reporter instead of mochawesome
       on('before:run', () => {
         console.log('Setting up test run...');
@@ -42,7 +60,7 @@ module.exports = defineConfig({
       
       // Record test results for later use
       on('after:spec', (spec, results) => {
-        if (results && results.video) {
+        if (results?.video) {
           // Path to the video file
           const videoPath = results.video;
           console.log(`Video created at: ${videoPath}`);

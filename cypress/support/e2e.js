@@ -19,6 +19,11 @@ import './element.command';
 import '@cypress/grep';
 require('cypress-xpath');
 
+// Register Allure reporting commands if enabled
+if (Cypress.env('ALLURE')) {
+  import('@shelex/cypress-allure-plugin');
+}
+
 // Hook that runs before each test
 before(function() {
   cy.log('Starting test execution');
