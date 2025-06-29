@@ -70,6 +70,8 @@ jobs:
           mkdir -p cypress/reports/html
           mkdir -p cypress/reports/json
           mkdir -p cypress/reports/.jsons
+          mkdir -p cypress/results
+          mkdir -p allure-results
           echo "Report directories created"
           
       # Health check before running tests
@@ -116,7 +118,7 @@ jobs:
           spec: "cypress/e2e/test/API/{API_Smoke_Test,Simple_API_Test}.cy.js"
           record: false # Disable recording to avoid record key error
           config-file: cypress.config.js
-          config: "retries=2,video=true,screenshotOnRunFailure=true"
+          config: "retries=2,video=true,screenshotOnRunFailure=true,reporter=json,reporterOptions={\"outputFile\":\"cypress/results/results.json\"}"
           browser: chrome
           headed: false
           install: false # Skip install since we already did it
@@ -228,42 +230,73 @@ jobs:
           echo "Allure report generation completed successfully"
           echo "::endgroup::"
           
-      # Add summary to workflow
+      # Add summary to workflow with simplified format
       - name: Add Test Summary to Job Summary
         if: always()
         run: |
-          echo "## 📊 Cypress API Test Results" >> $GITHUB_STEP_SUMMARY
-          
-          # Determine test status for better summary information
-          if [ "${{ steps.cypress_tests.outcome }}" == "success" ]; then
-            echo "✅ **Test Status: Passed**" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "❌ **Test Status: Failed**" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          # Count test files and executed tests
+          # Extract test outcomes from Cypress run
           TEST_FILES_COUNT=$(find cypress/e2e/test/API -name "*.cy.js" | wc -l)
           VIDEOS_COUNT=$(find cypress/videos -type f | wc -l)
           SCREENSHOTS_COUNT=$(find cypress/screenshots -type f | wc -l)
           REPORTS_COUNT=$(find cypress/reports -name "*.html" | wc -l)
           
-          # Try to extract actual test counts from Allure results if available
-          if [ -d "allure-results" ]; then
-            TOTAL_TESTS=$(ls allure-results/*.json | wc -l)
-            PASSED_TESTS=$(grep -l '"status": "passed"' allure-results/*.json | wc -l)
-            FAILED_TESTS=$(grep -l '"status": "failed"' allure-results/*.json | wc -l)
-            SKIPPED_TESTS=$(grep -l '"status": "skipped"' allure-results/*.json | wc -l)
+          # Extract test information from Cypress' built-in JSON report if available
+          MOCHA_FILE=$(find cypress/results -name "*.json" -not -path "*/node_modules/*" | head -1)
+          if [ -n "$MOCHA_FILE" ] && [ -f "$MOCHA_FILE" ]; then
+            TOTAL_TESTS=$(grep -o '"tests":[0-9]*' "$MOCHA_FILE" | awk -F: '{print $2}')
+            PASSED_TESTS=$(grep -o '"passes":[0-9]*' "$MOCHA_FILE" | awk -F: '{print $2}')
+            FAILED_TESTS=$(grep -o '"failures":[0-9]*' "$MOCHA_FILE" | awk -F: '{print $2}')
+            PENDING_TESTS=$(grep -o '"pending":[0-9]*' "$MOCHA_FILE" | awk -F: '{print $2}')
+            DURATION=$(grep -o '"duration":[0-9.]*' "$MOCHA_FILE" | awk -F: '{print $2}')
             
-            echo "### Test Results Summary" >> $GITHUB_STEP_SUMMARY
-            echo "| Result | Total ⚪ | Passed ✅ | Failed ❌ | Skipped ↩️ |" >> $GITHUB_STEP_SUMMARY
-            echo "| --- | --- | --- | --- | --- |" >> $GITHUB_STEP_SUMMARY
-            echo "| Count | $TOTAL_TESTS | $PASSED_TESTS | $FAILED_TESTS | $SKIPPED_TESTS |" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
+            # Convert to readable format
+            if [ -n "$DURATION" ]; then
+              DURATION=$(awk "BEGIN {printf \"%.3fs\", $DURATION/1000}")
+            else
+              DURATION="N/A"
+            fi
+            
+            # Default values if not found
+            TOTAL_TESTS=${TOTAL_TESTS:-0}
+            PASSED_TESTS=${PASSED_TESTS:-0}
+            FAILED_TESTS=${FAILED_TESTS:-0}
+            PENDING_TESTS=${PENDING_TESTS:-0}
+          else
+            # Get test counts from Mocha/Cypress output files
+            TEST_COUNT_FILES=$(find cypress -path "*/results/*" -name "*.json" | wc -l)
+            if [ "$TEST_COUNT_FILES" -gt 0 ]; then
+              TOTAL_TESTS=$TEST_COUNT_FILES
+              PASSED_TESTS=$(find cypress -path "*/results/*" -name "*.json" -exec grep -l '"state": *"passed"' {} \; | wc -l)
+              FAILED_TESTS=$(find cypress -path "*/results/*" -name "*.json" -exec grep -l '"state": *"failed"' {} \; | wc -l)
+              PENDING_TESTS=$(find cypress -path "*/results/*" -name "*.json" -exec grep -l '"state": *"pending"' {} \; | wc -l)
+              DURATION="N/A"
+            else
+              # Fallback to counting test files if no results
+              TOTAL_TESTS=$TEST_FILES_COUNT
+              PASSED_TESTS="N/A"
+              FAILED_TESTS="N/A"
+              PENDING_TESTS="N/A"
+              DURATION="N/A"
+            fi
           fi
           
-          # Test metrics table
+          # Determine status based on step outcome
+          if [ "${{ steps.cypress_tests.outcome }}" == "success" ]; then
+            STATUS="Passing ✅"
+          else
+            STATUS="Failing 🔴"
+          fi
+          
+          # Write the consolidated summary
+          echo "## Cypress Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Result | Passed ✅ | Failed ❌ | Pending ✋ | Skipped ↩️ | Duration 🕗 |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | --- | --- | --- | --- | --- |" >> $GITHUB_STEP_SUMMARY
+          echo "| $STATUS | $PASSED_TESTS | $FAILED_TESTS | $PENDING_TESTS | 0 | $DURATION |" >> $GITHUB_STEP_SUMMARY
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Test Resources" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Category | Count |" >> $GITHUB_STEP_SUMMARY
           echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
           echo "| 🎬 Videos | $VIDEOS_COUNT |" >> $GITHUB_STEP_SUMMARY
@@ -271,29 +304,16 @@ jobs:
           echo "| 📄 Reports | $REPORTS_COUNT |" >> $GITHUB_STEP_SUMMARY
           echo "| 🧪 Test Files | $TEST_FILES_COUNT |" >> $GITHUB_STEP_SUMMARY
           
-          # Add more specific API test information
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🧪 API Tests Executed" >> $GITHUB_STEP_SUMMARY
-          
-          # Extract test names from results or files
-          API_TESTS=$(grep -r "it\(\|it.only\(\|it\.skip(" cypress/e2e/test/API --include="*.cy.js" | grep -v "function" | sed 's/.*\(it\|it\.only\|it\.skip\)(\s*["'"'"']\(.*\)["'"'"'].*$/\2/' | head -10)
-          if [ -n "$API_TESTS" ]; then
-            while IFS= read -r test; do
-              echo "- $test" >> $GITHUB_STEP_SUMMARY
-            done <<< "$API_TESTS"
-          else
-            echo "- API Tests" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          # Environment information
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🔄 Environment" >> $GITHUB_STEP_SUMMARY
-          echo "- **Environment:** $CYPRESS_ENV" >> $GITHUB_STEP_SUMMARY
-          echo "- **Node:** $(node -v)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Workflow:** $GITHUB_WORKFLOW" >> $GITHUB_STEP_SUMMARY
-          echo "- **Run Date:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+          echo "| Environment | $CYPRESS_ENV |" >> $GITHUB_STEP_SUMMARY
+          echo "| Node Version | $(node -v) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Workflow | $GITHUB_WORKFLOW |" >> $GITHUB_STEP_SUMMARY
+          echo "| Run Date | $(date) |" >> $GITHUB_STEP_SUMMARY
           
-          # Add artifact link
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🔗 Artifacts" >> $GITHUB_STEP_SUMMARY
           echo "⬇️ [Download Artifacts](https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})" >> $GITHUB_STEP_SUMMARY
