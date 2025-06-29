@@ -26,21 +26,38 @@ module.exports = defineConfig({
     unsplashSecretKey: process.env.UNSPLASH_SECRET_KEY || config.env.unsplashSecretKey,
   },  e2e: {
     setupNodeEvents(on, config) {
-      // Cấu hình Mochawesome reporter
-      const options = {
-        reportDir: 'cypress/reports',
-        charts: true,
-        reportPageTitle: 'Cypress API Test Report',
-        embeddedScreenshots: true,
-        inlineAssets: true
-      };
-      
-      // Khởi tạo plugin với options
+      // Sử dụng spec reporter đơn giản hơn thay vì mochawesome
       on('before:run', () => {
-        console.log('Setting up Mochawesome reporter...');
+        console.log('Setting up test run...');
+        
+        // Đảm bảo thư mục báo cáo tồn tại
+        const fs = require('fs');
+        const path = require('path');
+        const reportsDir = path.join(__dirname, 'cypress/reports');
+        
+        if (!fs.existsSync(reportsDir)) {
+          fs.mkdirSync(reportsDir, { recursive: true });
+        }
       });
       
-      require('cypress-mochawesome-reporter/plugin')(on, options);
+      // Ghi lại kết quả test để sử dụng sau này
+      on('after:spec', (spec, results) => {
+        if (results && results.video) {
+          // Đường dẫn đến video
+          const videoPath = results.video;
+          console.log(`Video created at: ${videoPath}`);
+        }
+        
+        // Lưu kết quả test vào file JSON
+        const fs = require('fs');
+        const path = require('path');
+        const reportPath = path.join(__dirname, 'cypress/reports', `${path.basename(spec.name, '.js')}.json`);
+        
+        fs.writeFileSync(
+          reportPath,
+          JSON.stringify(results, null, 2)
+        );
+      });
       
       // Setup Cypress Grep
       cypressGrep(config);
@@ -51,23 +68,23 @@ module.exports = defineConfig({
           console.log(message);
           return null;
         },
+        writeReport({ report, filename }) {
+          const fs = require('fs');
+          const path = require('path');
+          const reportPath = path.join(__dirname, 'cypress/reports', filename);
+          
+          try {
+            fs.writeFileSync(reportPath, report);
+            return true;
+          } catch (e) {
+            console.error('Error writing report:', e);
+            return false;
+          }
+        }
       });
       
       // Detect CI environment
       config.env.CI = process.env.CI || false;
-      
-      // Tạo thư mục báo cáo trước khi chạy test
-      on('before:run', () => {
-        console.log('Setting up test run and reports directory...');
-        const fs = require('fs');
-        const path = require('path');
-        
-        // Tạo thư mục báo cáo
-        const reportsPath = path.join(__dirname, 'cypress/reports');
-        if (!fs.existsSync(reportsPath)) {
-          fs.mkdirSync(reportsPath, { recursive: true });
-        }
-      });
       
       // Tạo thư mục báo cáo trước khi chạy test
       on('before:run', () => {
@@ -101,5 +118,7 @@ module.exports = defineConfig({
     pageLoadTimeout: config.pageLoadTimeout,    responseTimeout: config.responseTimeout,
     viewportWidth: config.viewportWidth,
     viewportHeight: config.viewportHeight
-  },  reporter: 'cypress-mochawesome-reporter'
+  },  reporter: 'spec',
+  video: true,
+  screenshotOnRunFailure: true
 });

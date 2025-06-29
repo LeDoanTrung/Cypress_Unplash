@@ -40,8 +40,8 @@ jobs:
         uses: cypress-io/github-action@v6
         continue-on-error: true # Tiếp tục dù có lỗi
         with:
-          # Chỉ chạy test đơn giản trước để kiểm tra báo cáo
-          spec: "cypress/e2e/test/API/Simple_API_Test.cy.js"
+          # Chỉ chạy test smoke đơn giản
+          spec: "cypress/e2e/test/API/API_Smoke_Test.cy.js"
           record: true
           parallel: false
         env:
@@ -59,28 +59,29 @@ jobs:
           echo "Listing JSON report files:"
           find cypress -name "*.json" | grep -v "node_modules" || echo "No JSON files found"
           
-      # Tạo báo cáo test thủ công nếu cần
-      - name: Generate Report Manually
+      # Tạo báo cáo đơn giản dựa trên kết quả test
+      - name: Create Simple Test Report
         if: always()
         run: |
-          echo "Generating test report manually"
-          npm install -g mochawesome-merge mochawesome-report-generator
-          
-          # Tạo thư mục báo cáo nếu chưa tồn tại
+          echo "Creating simple test report"
           mkdir -p cypress/reports
+          echo "Test results:"
+          ls -la cypress/reports || echo "No reports directory found"
           
-          # Tìm và sao chép các file JSON báo cáo vào một thư mục
-          echo "Finding mochawesome reports"
-          find cypress -path "*/reports/*" -name "*.json" -not -path "*/node_modules/*" || echo "No JSON report files found"
-          
-          # Tạo file báo cáo từ các test đã chạy
-          if [ -d "cypress/reports/.jsons" ] && [ "$(ls -A cypress/reports/.jsons)" ]; then
-            echo "Found report JSONs in cypress/reports/.jsons"
-            mochawesome-merge cypress/reports/.jsons/*.json > cypress/reports/mochawesome.json || echo "Error merging JSON reports"
-            marge cypress/reports/mochawesome.json -f report -o cypress/reports/ || echo "Error generating HTML report"
+          if [ -f "cypress/reports/simple-report.html" ]; then
+            echo "Found report created by Cypress"
           else
-            echo "No JSON reports found, creating simple report"
-            echo "<html><body><h1>API Tests Run Summary</h1><p>Tests were executed successfully. View test results in Cypress Cloud.</p></body></html>" > cypress/reports/report.html
+            echo "Creating simple HTML report"
+            VIDEO_COUNT=$(find cypress/videos -type f | wc -l)
+            echo "<html><head><title>API Test Report</title>" > cypress/reports/report.html
+            echo "<style>body{font-family:Arial,sans-serif;margin:20px}.pass{color:green}.info{color:blue}</style>" >> cypress/reports/report.html
+            echo "</head><body>" >> cypress/reports/report.html
+            echo "<h1>Cypress API Test Report</h1>" >> cypress/reports/report.html
+            echo "<p>Run Date: $(date)</p>" >> cypress/reports/report.html
+            echo "<p><span class='info'>Test videos: $VIDEO_COUNT</span></p>" >> cypress/reports/report.html
+            echo "<p><span class='pass'>Tests were executed. Check Cypress Dashboard for detailed results.</span></p>" >> cypress/reports/report.html
+            echo "</body></html>" >> cypress/reports/report.html
+            echo "Simple HTML report created"
           fi
           
       # Upload báo cáo test
