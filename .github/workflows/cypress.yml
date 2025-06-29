@@ -116,16 +116,17 @@ jobs:
         with:
           # Only run simple API tests, exclude GetPhotographer Test
           spec: "cypress/e2e/test/API/{API_Smoke_Test,Simple_API_Test}.cy.js"
-          record: false # Disable recording to avoid record key error
+          record: false # Temporarily disabled - change to 'true' after setting up CYPRESS_RECORD_KEY in GitHub Secrets
           config-file: cypress.config.js
           config: "retries=2,video=true,screenshotOnRunFailure=true,reporter=json,reporterOptions={\"outputFile\":\"cypress/results/results.json\"}"
           browser: chrome
           headed: false
           install: false # Skip install since we already did it
         env:
+          # Cypress Cloud recording key
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # Pass GitHub token securely
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Test execution configuration
           CYPRESS_ENV: ${{ github.event.inputs.environment || 'qa' }}
           CYPRESS_CI: true
           CYPRESS_INCLUDE_TAGS: '@api'  # Ensure only tests with @api tag are run
