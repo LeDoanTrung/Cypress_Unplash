@@ -40,10 +40,10 @@ jobs:
         uses: cypress-io/github-action@v6
         continue-on-error: true # Tiếp tục dù có lỗi
         with:
-          # Chỉ chạy các API test
-          spec: "cypress/e2e/test/API/*.cy.js"
+          # Chỉ chạy test đơn giản trước để kiểm tra báo cáo
+          spec: "cypress/e2e/test/API/Simple_API_Test.cy.js"
           record: true
-          parallel: true
+          parallel: false
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -55,22 +55,21 @@ jobs:
         if: always()
         run: |
           echo "Listing report directories:"
-          find cypress/reports -type d
+          find cypress -type d | grep -v "node_modules"
           echo "Listing JSON report files:"
           find cypress -name "*.json" | grep -v "node_modules" || echo "No JSON files found"
           
-      # Tạo báo cáo HTML từ kết quả test
-      - name: Generate HTML Test Report
+      # Xử lý báo cáo test kể cả khi không có file
+      - name: Handle Test Reports
         if: always()
         run: |
-          echo "Creating Mochawesome report"
-          npm install -g mochawesome-merge mochawesome-report-generator
-          # Sử dụng find để tìm tất cả file JSON có thể
-          find cypress -name "*.json" | grep -v "node_modules" | xargs -I {} cp {} cypress/reports/json/ || true
-          mochawesome-merge cypress/reports/json/*.json > cypress/reports/mochawesome.json || echo "No JSON files to merge, creating empty report"
-          [ -f cypress/reports/mochawesome.json ] && marge cypress/reports/mochawesome.json -f report -o cypress/reports/html || echo "Creating default report"
-          # Tạo file báo cáo mặc định nếu không có kết quả
-          [ ! -f cypress/reports/html/report.html ] && echo "<html><body><h1>No test results available</h1></body></html>" > cypress/reports/html/report.html
+          echo "Handling test reports"
+          # Tạo thư mục báo cáo nếu chưa tồn tại
+          mkdir -p cypress/reports
+          # Tạo file báo cáo trống nếu không có báo cáo nào
+          if [ ! -f cypress/reports/report.html ]; then
+            echo "<html><body><h1>API Tests Run Summary</h1><p>Tests were executed but no report was generated. Check logs for details.</p></body></html>" > cypress/reports/report.html
+          fi
           
       # Upload báo cáo test
       - name: Upload Test Report
@@ -78,7 +77,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cypress-test-report
-          path: cypress/reports/html
+          path: cypress/reports
           retention-days: 30
           
       # Upload screenshots khi test fail

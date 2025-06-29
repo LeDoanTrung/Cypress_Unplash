@@ -26,21 +26,8 @@ module.exports = defineConfig({
     unsplashSecretKey: process.env.UNSPLASH_SECRET_KEY || config.env.unsplashSecretKey,
   },  e2e: {
     setupNodeEvents(on, config) {
-      // Cấu hình Mochawesome reporter đúng cách
-      const reporterOptions = {
-        charts: true, // Tạo biểu đồ trong báo cáo HTML
-        reportPageTitle: 'Cypress Unsplash Test Report', // Tiêu đề báo cáo
-        embeddedScreenshots: true, // Screenshots được nhúng vào báo cáo
-        inlineAssets: true, // Không tạo thư mục assets riêng
-        reportDir: 'cypress/reports/html', // Thư mục chứa báo cáo
-        overwrite: false, // Không ghi đè các báo cáo cũ
-        html: true, // Tạo báo cáo HTML
-        json: true, // Tạo báo cáo JSON
-        quiet: true, // Tránh log quá nhiều
-      };
-
-      // Gọi plugin Mochawesome và truyền tùy chọn
-      require('cypress-mochawesome-reporter/plugin')(on, reporterOptions);
+      // Cấu hình Mochawesome reporter theo cách đơn giản nhất
+      require('cypress-mochawesome-reporter/plugin')(on);
       
       // Setup Cypress Grep
       cypressGrep(config);
@@ -55,6 +42,19 @@ module.exports = defineConfig({
       
       // Detect CI environment
       config.env.CI = process.env.CI || false;
+      
+      // Tạo thư mục báo cáo trước khi chạy test
+      on('before:run', () => {
+        console.log('Setting up test run and reports directory...');
+        const fs = require('fs');
+        const path = require('path');
+        
+        // Tạo thư mục báo cáo
+        const reportsPath = path.join(__dirname, 'cypress/reports');
+        if (!fs.existsSync(reportsPath)) {
+          fs.mkdirSync(reportsPath, { recursive: true });
+        }
+      });
       
       // Tạo thư mục báo cáo trước khi chạy test
       on('before:run', () => {
@@ -91,15 +91,11 @@ module.exports = defineConfig({
   },  reporter: 'cypress-mochawesome-reporter',
   reporterOptions: {
     charts: true,
-    reportPageTitle: 'Cypress Unsplash API Test Report',
-    embeddedScreenshots: true,
-    inlineAssets: true,
-    videoOnFailOnly: false,
-    reportDir: 'cypress/reports/html',
-    overwrite: false,
+    reportDir: 'cypress/reports',
+    reportFilename: 'report',
+    overwrite: true,
     html: true,
     json: true,
-    jsonDir: 'cypress/reports/json',
-    quiet: true
+    embeddedScreenshots: true
   }
 });
